@@ -19,7 +19,7 @@ def Scraping_data(get_htmlSource, browser, NIT_ID):
             for data in range(45):
                 SegField.append('')
                 
-            Submission_date = get_htmlSource.partition('id="DownloadNITForm:itemlist:0:j_idt204"')[2].partition("</td>")[0].strip()
+            Submission_date = get_htmlSource.partition('id="DownloadNITForm:itemlist:0:j_idt203"')[2].partition("</td>")[0].strip()
             Submission_date = Submission_date.partition('">')[2].partition("</label>")[0].strip()
             if Submission_date != '':
                 Submission_date = datetime.strptime(Submission_date, '%d-%m-%Y')  # 27-11-2019
@@ -40,32 +40,42 @@ def Scraping_data(get_htmlSource, browser, NIT_ID):
             Purchaser = Purchaser.partition('">')[2].partition("</label>")[0].strip()
             SegField[12] = Purchaser.upper()
 
-            Purchaser_Website = get_htmlSource.partition('id="DownloadNITForm:j_idt138"')[2].partition("</td>")[0].strip()
-            Purchaser_Website = Purchaser_Website.partition('">')[2].partition("</label>")[0].strip()
-            if Purchaser_Website != '-':
-                SegField[8] = Purchaser_Website
-            else:
-                SegField[8] = ''
+            # Purchaser_Website = get_htmlSource.partition('id="DownloadNITForm:j_idt138"')[2].partition("</td>")[0].strip()
+            # Purchaser_Website = Purchaser_Website.partition('">')[2].partition("</label>")[0].strip()
+            # if Purchaser_Website != '-':
+            #     SegField[8] = Purchaser_Website
+            # else:
+            #     SegField[8] = ''
 
             # Title
             Main_Title = get_htmlSource.partition('id="DownloadNITForm:j_idt126"')[2].partition("</td>")[0].strip()
             Main_Title = Main_Title.partition('">')[2].partition("</label>")[0].strip()
             Main_Title = string.capwords(str(Main_Title))
+            if Main_Title == '':
+                Main_Title = get_htmlSource.partition('id="DownloadNITForm:j_idt125"')[2].partition("</td>")[0].strip()
+                Main_Title = Main_Title.partition('">')[2].partition("</label>")[0].strip()
+                Main_Title = string.capwords(str(Main_Title))
             SegField[19] = Main_Title
 
             # Tender Description
             Reference_No = get_htmlSource.partition('id="DownloadNITForm:j_idt132"')[2].partition("</td>")[0].strip()
             Reference_No = Reference_No.partition('">')[2].partition("</label>")[0].strip()
+            if Reference_No == '':
+                Reference_No = get_htmlSource.partition('id="DownloadNITForm:j_idt131"')[2].partition("</td>")[0].strip()
+                Reference_No = Reference_No.partition('">')[2].partition("</label>")[0].strip()
 
             Department_Name = get_htmlSource.partition('DownloadNITForm:j_idt130')[2].partition("</td>")[0].strip()
             Department_Name = Department_Name.partition('">')[2].partition("</label>")[0].strip()
+            if Department_Name == '':
+                Department_Name = get_htmlSource.partition('DownloadNITForm:j_idt129')[2].partition("</td>")[0].strip()
+                Department_Name = Department_Name.partition('">')[2].partition("</label>")[0].strip()
 
-            Posting_date = ''
-            for Posting_date in browser.find_elements_by_xpath('//*[@id="DownloadNITForm:nitInfo"]/tbody/tr[4]/td[4]'):
-                Posting_date = Posting_date.get_attribute('innerText')
-                break
+            # Posting_date = ''
+            # for Posting_date in browser.find_elements_by_xpath('//*[@id="DownloadNITForm:nitInfo"]/tbody/tr[4]/td[4]'):
+            #     Posting_date = Posting_date.get_attribute('innerText')
+            #     break
 
-            Tender_Description = 'Title: '+str(SegField[19])+"<br>\n""Agency Name: "+str(SegField[12])+"<br>\n""Purchaser Website: "+str(SegField[8])+"<br>\n""Department Name: "+str(Department_Name)+"<br>\n""Reference No: "+str(Reference_No)+"<br>\n""Posting Date: "+str(Posting_date)
+            Tender_Description = 'Title: '+str(SegField[19])+"<br>\n""Agency Name: "+str(SegField[12])+"<br>\n""Purchaser Website: "+str(SegField[8])+"<br>\n""Department Name: "+str(Department_Name)+"<br>\n""Reference No: "+str(Reference_No)
             Tender_Description = string.capwords(str(Tender_Description))
             SegField[18] = str(Tender_Description)
 
@@ -98,8 +108,14 @@ def Scraping_data(get_htmlSource, browser, NIT_ID):
                 print(SegField[SegIndex])
                 SegField[SegIndex] = html.unescape(str(SegField[SegIndex]))
                 SegField[SegIndex] = str(SegField[SegIndex]).replace("'", "''")
+            if len(SegField[19]) >= 200:
+                SegField[19] = str(SegField[19])[:200]+'...'
+
+            if len(SegField[18]) >= 1500:
+                SegField[18] = str(SegField[18])[:1500]+'...'
+            if len(SegField[19]) != 0 and SegField[24] != '' and len(SegField[18]) != '':
+                Check_date(get_htmlSource, browser, SegField)
             a = 1
-            Check_date(get_htmlSource, browser, SegField)
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]

@@ -8,6 +8,7 @@ import sys
 import os
 import ctypes
 from Scraping_data import Scraping_data
+from selenium.webdriver.chrome.options import Options
 import wx
 app = wx.App()
 
@@ -16,17 +17,16 @@ def ChromeDriver():
     # File_Location = open("D:\\0 PYTHON EXE SQL CONNECTION & DRIVER PATH\\pprasindh.gov.pk\\Location For Database & Driver.txt", "r")
     # TXT_File_AllText = File_Location.read()
     # Chromedriver = str(TXT_File_AllText).partition("Driver=")[2].partition("\")")[0].strip()
-    browser = webdriver.Chrome(executable_path=str(f"C:\\chromedriver.exe"))
-    browser.get("""https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh?hl=en" ping="/url?sa=t&amp;source=web&amp;rct=j&amp;url=https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh%3Fhl%3Den&amp;ved=2ahUKEwivq8rjlcHmAhVtxzgGHZ-JBMgQFjAAegQIAhAB""")
-    wx.MessageBox(' -_-  Add Extension and Select Proxy Between 25 SEC -_- ',
-                  'Info', wx.OK | wx.ICON_WARNING)
-    time.sleep(25)
-    browser.get(
-        "https://ppms.pprasindh.gov.pk/PPMS/public/portal/notice-inviting-tender")
-    wx.MessageBox(' -_- Change Some Setting Then Click On OK   -_- ',
-                  'Info', wx.OK | wx.ICON_WARNING)
-    time.sleep(5)
+    chrome_options = Options()
+    chrome_options.add_extension('C:\\BrowsecVPN.crx')
+    browser = webdriver.Chrome(executable_path=str(f"C:\\chromedriver.exe"),chrome_options=chrome_options)
     browser.maximize_window()
+    # browser.get("""https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh?hl=en" ping="/url?sa=t&amp;source=web&amp;rct=j&amp;url=https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh%3Fhl%3Den&amp;ved=2ahUKEwivq8rjlcHmAhVtxzgGHZ-JBMgQFjAAegQIAhAB""")
+    wx.MessageBox(' -_-  Add Extension and Select Proxy Between 10 SEC -_- ','Info', wx.OK | wx.ICON_WARNING)
+    time.sleep(15)
+    browser.get("https://ppms.pprasindh.gov.pk/PPMS/public/portal/notice-inviting-tender")
+    wx.MessageBox(' -_- Change Some Setting Then Click On OK   -_- ','Info', wx.OK | wx.ICON_WARNING)
+    time.sleep(5)
     clicking(browser)
 
 
@@ -76,10 +76,8 @@ def Click_On_Tender_Icon(browser):
         try:
             page_End_count = ''
             for page_End_count in browser.find_elements_by_xpath('//*[@id="PostedNIT:datalist_paginator_top"]/span[1]'):
-                page_End_count = page_End_count.get_attribute(
-                    'innerText')  # eg: (1 OF 1)
-                page_End_count = page_End_count.partition(
-                    "OF")[2].partition(")")[0].strip()
+                page_End_count = page_End_count.get_attribute('innerText')  # eg: (1 OF 1)
+                page_End_count = page_End_count.partition("OF")[2].partition(")")[0].strip()
                 break
             for next_page in range(0, int(page_End_count)+1, 1):
                 tr = 1
@@ -91,28 +89,21 @@ def Click_On_Tender_Icon(browser):
                         break
                     No_records_found = ''
                     for No_records_found in browser.find_elements_by_xpath('//*[@id="DownloadNITForm:itemlist1_data"]/tr/td'):
-                        No_records_found = No_records_found.get_attribute(
-                            'innerText').strip()
+                        No_records_found = No_records_found.get_attribute('innerText').strip()
                         break
                     if No_records_found != 'No records found.':
                         get_htmlSource = ''
                         global_var.Total += 1
                         for get_htmlSource in browser.find_elements_by_xpath('//*[@id="DownloadNITDlg"]/div[2]'):
-                            get_htmlSource = get_htmlSource.get_attribute(
-                                'outerHTML')
+                            get_htmlSource = get_htmlSource.get_attribute('outerHTML')
                             get_htmlSource = html.unescape(str(get_htmlSource))
                             break
                         time.sleep(1.5)
-                        get_htmlSource = get_htmlSource.replace(
-                            """<input id="DownloadNITForm:corrigendumNo_focus" name="DownloadNITForm:corrigendumNo_focus" type="text" autocomplete="off" role="combobox" aria-haspopup="true" aria-expanded="false" aria-autocomplete="list" aria-owns="DownloadNITForm:corrigendumNo_items" aria-activedescendant="DownloadNITForm:corrigendumNo_0" aria-describedby="DownloadNITForm:corrigendumNo_0" aria-disabled="false">""", '')
-
-                        get_htmlSource = get_htmlSource.replace(
-                            'href="#', 'href="https://ppms.pprasindh.gov.pk/PPMS/public/portal/notice-inviting-tender#')
-                        get_htmlSource = get_htmlSource.replace(
-                            """<select id="DownloadNITForm:corrigendumNo_input" name="DownloadNITForm:corrigendumNo_input" tabindex="-1" aria-hidden="true" onchange="PrimeFaces.ab({s:" downloadnitform:corrigendumno",e:"change",p:"downloadnitform:corrigendumno",u:"downloadnitform:tendergrid="" downloadnitform:nitinfo="" downloadnitform:nitgrid="" downloadnitform:sindhinews="" downloadnitform:urdunews="" downloadnitform:internationalengnew="" downloadnitform:suppengnews="" downloadnitform:engnews"});"=""><option value="0" selected="selected"></option></select>""", '')
+                        get_htmlSource = get_htmlSource.replace("""<input id="DownloadNITForm:corrigendumNo_focus" name="DownloadNITForm:corrigendumNo_focus" type="text" autocomplete="off" role="combobox" aria-haspopup="true" aria-expanded="false" aria-autocomplete="list" aria-owns="DownloadNITForm:corrigendumNo_items" aria-activedescendant="DownloadNITForm:corrigendumNo_0" aria-describedby="DownloadNITForm:corrigendumNo_0" aria-disabled="false">""", '')
+                        get_htmlSource = get_htmlSource.replace('href="#', 'href="https://ppms.pprasindh.gov.pk/PPMS/public/portal/notice-inviting-tender#')
+                        get_htmlSource = get_htmlSource.replace("""<select id="DownloadNITForm:corrigendumNo_input" name="DownloadNITForm:corrigendumNo_input" tabindex="-1" aria-hidden="true" onchange="PrimeFaces.ab({s:" downloadnitform:corrigendumno",e:"change",p:"downloadnitform:corrigendumno",u:"downloadnitform:tendergrid="" downloadnitform:nitinfo="" downloadnitform:nitgrid="" downloadnitform:sindhinews="" downloadnitform:urdunews="" downloadnitform:internationalengnew="" downloadnitform:suppengnews="" downloadnitform:engnews"});"=""><option value="0" selected="selected"></option></select>""", '')
                         Scraping_data(get_htmlSource, browser, NIT_ID)
-                        print(" Total: " + str(global_var.Total) + " Duplicate: " + str(global_var.duplicate) + " Expired: " + str(global_var.expired) + " Inserted: " + str(global_var.inserted) +
-                              " Skipped: " + str(global_var.skipped) + " Deadline Not given: " + str(global_var.deadline_Not_given) + " QC Tenders: " + str(global_var.QC_Tender), "\n")
+                        print(" Total: " + str(global_var.Total) + " Duplicate: " + str(global_var.duplicate) + " Expired: " + str(global_var.expired) + " Inserted: " + str(global_var.inserted) +" Skipped: " + str(global_var.skipped) + " Deadline Not given: " + str(global_var.deadline_Not_given) + " QC Tenders: " + str(global_var.QC_Tender), "\n")
                         error = True 
                         while error == True:
                             try:
@@ -126,8 +117,7 @@ def Click_On_Tender_Icon(browser):
                         tr += 1
                     else:
                         browser.refresh()
-                        ctypes.windll.user32.MessageBoxW(
-                            0, "No records found.", "pprasindh.gov.pk", 1)
+                        ctypes.windll.user32.MessageBoxW(0, "No records found.", "pprasindh.gov.pk", 1)
                         clicking(browser)
                 error2 = True
                 while error2 == True:
@@ -144,8 +134,7 @@ def Click_On_Tender_Icon(browser):
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print("Error ON : ", sys._getframe().f_code.co_name + "--> " +
-                  str(e), "\n", exc_type, "\n", fname, "\n", exc_tb.tb_lineno)
+            print("Error ON : ", sys._getframe().f_code.co_name + "--> " +str(e), "\n", exc_type, "\n", fname, "\n", exc_tb.tb_lineno)
             a = False
 
     ctypes.windll.user32.MessageBoxW(0, "Total: " + str(global_var.Total) + "\n""Duplicate: " + str(

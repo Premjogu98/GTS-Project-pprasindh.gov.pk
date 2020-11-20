@@ -113,7 +113,7 @@ def Scraping_data(get_htmlSource, browser, NIT_ID):
 
             if len(SegField[18]) >= 1500:
                 SegField[18] = str(SegField[18])[:1500]+'...'
-            if len(SegField[19]) != 0 and SegField[24] != '' and len(SegField[18]) != '':
+            if len(SegField[19]) != 0 and SegField[24] != '' and len(SegField[18]) != 0:
                 Check_date(get_htmlSource, browser, SegField)
             a = 1
         except Exception as e:
